@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import { View, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Input, Button, ListItem, Icon } from 'react-native-elements';
+import { format } from 'date-fns';
 
 const CrudExample = () => {
   const [data, setData] = useState([]);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [km, setKm] = useState('');
 
   const handleAddItem = () => {
-    if (name.trim() === '' || email.trim() === '') {
+    if (km.trim() === '') {
       return;
     }
 
     const newItem = {
       id: Date.now().toString(),
-      name,
-      email,
+      date,
+      km,
     };
 
     setData([...data, newItem]);
-    setName('');
-    setEmail('');
+    setDate(new Date());
+    setKm('');
   };
 
   const handleDeleteItem = (id) => {
@@ -28,11 +29,15 @@ const CrudExample = () => {
     setData(newData);
   };
 
+  const formatDate = (date) => {
+    return format(date, 'dd/MM/yyyy');
+  };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.itemContainer}>
       <ListItem.Content>
-        <ListItem.Title>{item.name}</ListItem.Title>
-        <ListItem.Subtitle>{item.email}</ListItem.Subtitle>
+        <ListItem.Title>{formatDate(item.date)}</ListItem.Title>
+        <ListItem.Subtitle>{item.km} KM</ListItem.Subtitle>
       </ListItem.Content>
       <Icon
         name="delete"
@@ -47,21 +52,22 @@ const CrudExample = () => {
     <View style={styles.container}>
       <View style={styles.formContainer}>
         <Input
-          label="Nome"
-          placeholder="Digite o nome"
-          value={name}
-          onChangeText={(text) => setName(text)}
+          label="Data"
+          placeholder="Digite a data"
+          value={formatDate(date)}
+          editable={false}
         />
         <Input
-          label="Email"
-          placeholder="Digite o email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
+          label="Quantos KM?"
+          placeholder="Digite a quantidade de KM"
+          keyboardType="numeric"
+          value={km}
+          onChangeText={(text) => setKm(text)}
         />
         <Button
           title="Adicionar"
           onPress={handleAddItem}
-          disabled={name.trim() === '' || email.trim() === ''}
+          disabled={km.trim() === ''}
           buttonStyle={styles.addButton}
         />
       </View>
@@ -80,7 +86,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: 80,
+    paddingTop: 40,
     paddingHorizontal: 16,
   },
   formContainer: {
