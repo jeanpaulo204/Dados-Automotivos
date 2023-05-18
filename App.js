@@ -7,9 +7,10 @@ const CrudExample = () => {
   const [data, setData] = useState([]);
   const [date, setDate] = useState(new Date());
   const [km, setKm] = useState('');
+  const [gasolina, setGasolina] = useState('');
 
   const handleAddItem = () => {
-    if (km.trim() === '') {
+    if (km.trim() === '' || gasolina.trim() === '') {
       return;
     }
 
@@ -17,11 +18,13 @@ const CrudExample = () => {
       id: Date.now().toString(),
       date,
       km,
+      gasolina,
     };
 
     setData([...data, newItem]);
     setDate(new Date());
     setKm('');
+    setGasolina('');
   };
 
   const handleDeleteItem = (id) => {
@@ -38,6 +41,7 @@ const CrudExample = () => {
       <ListItem.Content>
         <ListItem.Title>{formatDate(item.date)}</ListItem.Title>
         <ListItem.Subtitle>{item.km} KM</ListItem.Subtitle>
+        <ListItem.Subtitle>{item.gasolina} Litros</ListItem.Subtitle>
       </ListItem.Content>
       <Icon
         name="delete"
@@ -64,10 +68,17 @@ const CrudExample = () => {
           value={km}
           onChangeText={(text) => setKm(text)}
         />
+        <Input
+          label="Gasolina (Litros)"
+          placeholder="Digite a quantidade de gasolina"
+          keyboardType="numeric"
+          value={gasolina}
+          onChangeText={(text) => setGasolina(text)}
+        />
         <Button
           title="Adicionar"
           onPress={handleAddItem}
-          disabled={km.trim() === ''}
+          disabled={km.trim() === '' || gasolina.trim() === ''}
           buttonStyle={styles.addButton}
         />
       </View>
@@ -86,7 +97,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: 40,
+    paddingTop: 80,
     paddingHorizontal: 16,
   },
   formContainer: {
