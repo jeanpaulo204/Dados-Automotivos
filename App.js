@@ -8,6 +8,10 @@ const CrudExample = () => {
   const [email, setEmail] = useState('');
 
   const handleAddItem = () => {
+    if (name.trim() === '' || email.trim() === '') {
+      return;
+    }
+
     const newItem = {
       id: Date.now().toString(),
       name,
@@ -57,6 +61,7 @@ const CrudExample = () => {
         <Button
           title="Adicionar"
           onPress={handleAddItem}
+          disabled={name.trim() === '' || email.trim() === ''}
           buttonStyle={styles.addButton}
         />
       </View>
@@ -75,7 +80,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: 40,
+    paddingTop: 80,
     paddingHorizontal: 16,
   },
   formContainer: {
