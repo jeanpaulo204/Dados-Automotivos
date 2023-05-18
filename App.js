@@ -111,6 +111,10 @@ const CrudExample = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.titleContainer}>
+        <Icon name="car" type="font-awesome" size={40} color="#fff" />
+      </View>
+
       <View style={styles.formContainer}>
         <Input
           label="Data"
@@ -169,6 +173,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 80,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
   formContainer: {
     marginBottom: 16,
     backgroundColor: '#fff',
@@ -200,13 +209,14 @@ const styles = StyleSheet.create({
     bottom: 16,
     left: 16,
     right: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#51B449',
     padding: 16,
     borderRadius: 8,
     elevation: 3,
   },
   messageText: {
     textAlign: 'center',
+    color: 'white',
     fontWeight: 'bold',
   },
 });
