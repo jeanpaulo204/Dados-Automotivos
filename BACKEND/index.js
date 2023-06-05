@@ -26,6 +26,13 @@ app.get('/veiculos', (req, res) => {
     // sequelize.findAll(Entidade Aluno);
 })
 
+// Rota para deletar
+app.delete('/veiculos/:id', (req, res) => {
+  const id = req.params.id;
+
+  execSQLQuery(`DELETE FROM veiculos WHERE id = ${id}`, res);
+});
+
 //Rota para Listar apenas um 
 app.get('/aluno/:id?', (req, res) => {
     execSQLQuery('SELECT * FROM veiculos WHERE id = ' + req.params.id, res);

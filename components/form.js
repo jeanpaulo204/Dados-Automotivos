@@ -4,6 +4,20 @@ import { Input, Button, ListItem, Icon } from 'react-native-elements';
 import { format } from 'date-fns';
 import axios from 'axios';
 
+
+
+     // Use o Axios para fazer requisições HTTP
+     axios.get('http://172.18.137.87:3302/veiculos')
+     .then(response => {
+       // Manipule a resposta da requisição aqui
+       console.log(response.data);
+     })
+     .catch(error => {
+       // Manipule erros aqui
+       console.error(error);
+     });
+
+
 const CrudExample = () => {
   const [data, setData] = useState([]);
   const [date, setDate] = useState(new Date());
