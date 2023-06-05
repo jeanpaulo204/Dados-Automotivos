@@ -6,7 +6,7 @@ import axios from 'axios';
 
 
      // Use o Axios para fazer requisições HTTP
-     axios.post('http://192.168.100.43:3302/veiculos')
+     axios.get('http://172.18.137.87:3302/veiculos')
      .then(response => {
        // Manipule a resposta da requisição aqui
        console.log(response.data);
@@ -34,13 +34,12 @@ const handleAddItem = () => {
     // ...
   } else {
     const newItem = {
-      id: Date.now().toString(),
       date,
       km,
       gasolina,
     };
 
-    axios.post('http://192.168.100.43:3302/veiculos', newItem)
+    axios.post('http://172.18.137.87:3302/veiculos', newItem)
       .then(response => {
         // Manipule a resposta da requisição aqui, se necessário
         console.log(response.data);
@@ -92,9 +91,9 @@ const handleAddItem = () => {
 
    
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item })  => (
     <TouchableOpacity style={styles.itemContainer}>
-      <ListItem.Content>
+      <ListItem.Content >
         <ListItem.Title>{formatDate(item.date)}</ListItem.Title>
         <ListItem.Subtitle>{item.km} KM</ListItem.Subtitle>
         <ListItem.Subtitle>{item.gasolina} Litros</ListItem.Subtitle>

@@ -7,9 +7,9 @@ app.use(express.json());
 
 const cors = require("cors");
 
-app.options("*", cors({ origin: 'http://192.168.100.43:19006', optionsSuccessStatus: 200 }));
+app.options("*", cors({ origin: 'http://172.18.137.87:19006', optionsSuccessStatus: 200 }));
 
-app.use(cors({ origin: "http://192.168.100.43:19006", optionsSuccessStatus: 200 }));
+app.use(cors({ origin: "http://172.18.137.87:19006", optionsSuccessStatus: 200 }));
 
 //Rota Default
 
@@ -33,9 +33,13 @@ app.get('/aluno/:id?', (req, res) => {
 
 //Rota para Cadastrar 
 app.post('/veiculos', (req, res) => {
-  const {data,km,gasolina} = req.body;
+  const {date,km,gasolina} = req.body;
+
+  console.log('req.body :>> ', req.body);
+
+  //Converte o date Zuado para o formato do Banco
   if (km) {
-    execSQLQuery(`INSERT INTO veiculos(data,km,gasolina) VALUES('${data}','${km}','${gasolina}')`, res);
+    execSQLQuery(`INSERT INTO veiculos(km,gasolina) VALUES('${km}','${gasolina}')`, res);
   } else {
     execSQLQuery(`INSERT INTO veiculos(data) VALUES('${data}')`, res);
   }
@@ -55,10 +59,10 @@ app.get('/veiculos', (req, res) => {
 
 function execSQLQuery(sqlQry, res){
   const connection = mysql.createConnection({
-    host     : '0.0.0.0',
-    port     : 3306,
+    host     : 'localhost',
+    port     : '3306',
     user     : 'root',
-    password : '12345678',
+    password : '1234',
     database : 'sys'
   });
  
