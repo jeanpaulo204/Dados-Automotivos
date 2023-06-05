@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 
+
 const Cadastro = () => {
   const [nome, setNome] = useState('');
   const [veiculo, setVeiculo] = useState('');
@@ -9,14 +10,15 @@ const Cadastro = () => {
   const handleCadastro = () => {
     // Aqui você pode adicionar a lógica para lidar com o cadastro dos dados
     // Por exemplo, enviar os dados para um servidor ou atualizar o estado da aplicação
-
     console.log('Nome:', nome);
     console.log('Veículo:', veiculo);
 
     // Limpar os campos após o cadastro
     setNome('');
-    setVeiculo('');
+    setVeiculo('');  
   };
+
+  
 
   return (
     <View style={styles.container}>

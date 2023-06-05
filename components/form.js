@@ -2,6 +2,19 @@ import React, { useState } from 'react';
 import { View, FlatList, TouchableOpacity, StyleSheet, Alert, Text } from 'react-native';
 import { Input, Button, ListItem, Icon } from 'react-native-elements';
 import { format } from 'date-fns';
+import axios from 'axios';
+
+
+     // Use o Axios para fazer requisições HTTP
+     axios.post('http://192.168.100.43:3302/veiculos')
+     .then(response => {
+       // Manipule a resposta da requisição aqui
+       console.log(response.data);
+     })
+     .catch(error => {
+       // Manipule erros aqui
+       console.error(error);
+     });
 
 const CrudExample = () => {
   const [data, setData] = useState([]);
@@ -12,45 +25,37 @@ const CrudExample = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [showEditMessage, setShowEditMessage] = useState(false);
 
-  const handleAddItem = () => {
-    if (km.trim() === '' || gasolina.trim() === '') {
-      return;
-    }
+const handleAddItem = () => {
+  if (km.trim() === '' || gasolina.trim() === '') {
+    return;
+  }
 
-    if (editingItemId) {
-      const updatedData = data.map((item) => {
-        if (item.id === editingItemId) {
-          return {
-            ...item,
-            date,
-            km,
-            gasolina,
-          };
-        }
-        return item;
+  if (editingItemId) {
+    // ...
+  } else {
+    const newItem = {
+      id: Date.now().toString(),
+      date,
+      km,
+      gasolina,
+    };
+
+    axios.post('http://192.168.100.43:3302/veiculos', newItem)
+      .then(response => {
+        // Manipule a resposta da requisição aqui, se necessário
+        console.log(response.data);
+        setData([...data, newItem]);
+      })
+      .catch(error => {
+        // Manipule erros aqui, se necessário
+        console.error(error);
       });
+  }
 
-      setData(updatedData);
-      setShowEditMessage(true);
-      setTimeout(() => {
-        setShowEditMessage(false);
-      }, 1000);
-      setEditingItemId(null);
-    } else {
-      const newItem = {
-        id: Date.now().toString(),
-        date,
-        km,
-        gasolina,
-      };
-
-      setData([...data, newItem]);
-    }
-
-    setDate(new Date());
-    setKm('');
-    setGasolina('');
-  };
+  setDate(new Date());
+  setKm('');
+  setGasolina('');
+};
 
   const handleDeleteItem = (id) => {
     Alert.alert(
@@ -84,6 +89,8 @@ const CrudExample = () => {
   const formatDate = (date) => {
     return format(date, 'dd/MM/yyyy');
   };
+
+   
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.itemContainer}>

@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import Form from './components/form';
 
+
 // Componente da tela inicial
 function HomeScreen({ navigation }) {
   const [username, setUsername] = useState('');
@@ -18,7 +19,11 @@ function HomeScreen({ navigation }) {
     }
   };
 
+
+  
+
   return (
+    
     <View style={styles.container}>
       <View style={styles.square}>
       <Ionicons name="ios-lock-closed" size={30} color="#777" style={styles.icon} />
@@ -42,6 +47,7 @@ function HomeScreen({ navigation }) {
     </View>
   );
 }
+
 
 // Componente da tela de detalhes
 function DetailsScreen() {
