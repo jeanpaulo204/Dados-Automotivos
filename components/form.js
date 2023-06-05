@@ -1,20 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, FlatList, TouchableOpacity, StyleSheet, Alert, Text } from 'react-native';
 import { Input, Button, ListItem, Icon } from 'react-native-elements';
 import { format } from 'date-fns';
 import axios from 'axios';
-
-
-     // Use o Axios para fazer requisições HTTP
-     axios.get('http://172.18.137.87:3302/veiculos')
-     .then(response => {
-       // Manipule a resposta da requisição aqui
-       console.log(response.data);
-     })
-     .catch(error => {
-       // Manipule erros aqui
-       console.error(error);
-     });
 
 const CrudExample = () => {
   const [data, setData] = useState([]);
@@ -24,37 +12,40 @@ const CrudExample = () => {
   const [editingItemId, setEditingItemId] = useState(null);
   const [showMessage, setShowMessage] = useState(false);
   const [showEditMessage, setShowEditMessage] = useState(false);
+  const flatListRef = useRef(null);
 
-const handleAddItem = () => {
-  if (km.trim() === '' || gasolina.trim() === '') {
-    return;
-  }
+  const handleAddItem = () => {
+    if (km.trim() === '' || gasolina.trim() === '') {
+      return;
+    }
 
-  if (editingItemId) {
-    // ...
-  } else {
-    const newItem = {
-      date,
-      km,
-      gasolina,
-    };
+    if (editingItemId) {
+      // ...
+    } else {
+      const newItem = {
+        id: Date.now(), // Gera um ID único usando a função Date.now()
+        date,
+        km,
+        gasolina,
+      };
 
-    axios.post('http://172.18.137.87:3302/veiculos', newItem)
-      .then(response => {
-        // Manipule a resposta da requisição aqui, se necessário
-        console.log(response.data);
-        setData([...data, newItem]);
-      })
-      .catch(error => {
-        // Manipule erros aqui, se necessário
-        console.error(error);
-      });
-  }
+      axios.post('http://172.18.137.87:3302/veiculos', newItem)
+        .then(response => {
+          // Manipule a resposta da requisição aqui, se necessário
+          console.log(response.data);
+          setData([...data, newItem]);
+          flatListRef.current.scrollToEnd(); // Role para o novo item adicionado
+        })
+        .catch(error => {
+          // Manipule erros aqui, se necessário
+          console.error(error);
+        });
+    }
 
-  setDate(new Date());
-  setKm('');
-  setGasolina('');
-};
+    setDate(new Date());
+    setKm('');
+    setGasolina('');
+  };
 
   const handleDeleteItem = (id) => {
     Alert.alert(
@@ -89,11 +80,9 @@ const handleAddItem = () => {
     return format(date, 'dd/MM/yyyy');
   };
 
-   
-
-  const renderItem = ({ item })  => (
+  const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.itemContainer}>
-      <ListItem.Content >
+      <ListItem.Content>
         <ListItem.Title>{formatDate(item.date)}</ListItem.Title>
         <ListItem.Subtitle>{item.km} KM</ListItem.Subtitle>
         <ListItem.Subtitle>{item.gasolina} Litros</ListItem.Subtitle>
@@ -151,8 +140,9 @@ const handleAddItem = () => {
       </View>
 
       <FlatList
+        ref={flatListRef}
         data={data}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
       />
