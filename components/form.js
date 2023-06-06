@@ -1,103 +1,131 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, FlatList, TouchableOpacity, StyleSheet, Alert, Text } from 'react-native';
 import { Input, Button, ListItem, Icon } from 'react-native-elements';
 import { format } from 'date-fns';
 import axios from 'axios';
 
-
-
-     // Use o Axios para fazer requisições HTTP
-     axios.get('http://172.18.137.87:3302/veiculos')
-     .then(response => {
-       // Manipule a resposta da requisição aqui
-       console.log(response.data);
-     })
-     .catch(error => {
-       // Manipule erros aqui
-       console.error(error);
-     });
-
-
-const CrudExample = () => {
-  const [data, setData] = useState([]);
-  const [date, setDate] = useState(new Date());
+const ExemploCrud = () => {
+  const [dados, setDados] = useState([]);
+  const [data, setData] = useState(new Date());
   const [km, setKm] = useState('');
   const [gasolina, setGasolina] = useState('');
-  const [editingItemId, setEditingItemId] = useState(null);
-  const [showMessage, setShowMessage] = useState(false);
-  const [showEditMessage, setShowEditMessage] = useState(false);
-  const flatListRef = useRef(null);
+  const [itemIdEditando, setItemIdEditando] = useState(null);
+  const [exibirMensagem, setExibirMensagem] = useState(false);
+  const [exibirMensagemEdicao, setExibirMensagemEdicao] = useState(false);
+  const [exibirMensagemExclusao, setExibirMensagemExclusao] = useState(false);
+  const refLista = useRef(null);
 
-  const handleAddItem = () => {
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://192.168.100.43:3302/veiculos');
+      setDados(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const adicionarItem = () => {
     if (km.trim() === '' || gasolina.trim() === '') {
       return;
     }
 
-    if (editingItemId) {
-      // ...
-    } else {
-      const newItem = {
-        id: Date.now(), // Gera um ID único usando a função Date.now()
-        date,
+    if (itemIdEditando) {
+      const itemAtualizado = {
+        id: itemIdEditando,
+        data,
         km,
         gasolina,
       };
 
-      axios.post('http://172.18.137.87:3302/veiculos', newItem)
-        .then(response => {
-          // Manipule a resposta da requisição aqui, se necessário
+      axios.put(`http://192.168.100.43:3302/veiculos/${itemIdEditando}`, itemAtualizado)
+        .then((response) => {
           console.log(response.data);
-          setData([...data, newItem]);
-          flatListRef.current.scrollToEnd(); // Role para o novo item adicionado
+          fetchData();
+          setExibirMensagemEdicao(true);
+          setTimeout(() => {
+            setExibirMensagemEdicao(false);
+          }, 2000);
         })
-        .catch(error => {
-          // Manipule erros aqui, se necessário
+        .catch((error) => {
+          console.error(error);
+        });
+
+      setItemIdEditando(null);
+    } else {
+      const novoItem = {
+        id: Date.now(),
+        data,
+        km,
+        gasolina,
+      };
+
+      axios.post('http://192.168.100.43:3302/veiculos', novoItem)
+        .then((response) => {
+          console.log(response.data);
+          setDados([...dados, novoItem]);
+          refLista.current.scrollToEnd();
+        })
+        .catch((error) => {
           console.error(error);
         });
     }
 
-    setDate(new Date());
+    setData(new Date());
     setKm('');
     setGasolina('');
   };
 
-  const handleDeleteItem = (id) => {
-    Alert.alert(
-      'Confirmação',
-      'Você tem certeza que deseja excluir este item?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: () => {
-            const newData = data.filter((item) => item.id !== id);
-            setData(newData);
-            setShowMessage(true);
-            setTimeout(() => {
-              setShowMessage(false);
-            }, 1000);
-          },
-        },
-      ],
-    );
+  // const excluirItem = async (id) => {
+  //   try {
+  //     await axios.delete(`http://192.168.100.43:3302/veiculos/${id}`);
+  //     fetchData();
+  //     setExibirMensagemExclusao(true);
+  //     setTimeout(() => {
+  //       setExibirMensagemExclusao(false);
+  //     }, 2000);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const excluirItem = async (id) => {
+    try {
+      await axios.delete(`http://192.168.100.43:3302/veiculos/${id}`);
+      
+      setExibirMensagemExclusao(true);
+      setTimeout(() => {
+        setExibirMensagemExclusao(false);
+      }, 2000);
+
+      setDados(dados.filter(item => item.id !== id));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleEditItem = (item) => {
-    setEditingItemId(item.id);
-    setDate(item.date);
-    setKm(item.km);
-    setGasolina(item.gasolina);
+
+  const editarItem = (item) => {
+    setItemIdEditando(item.id);
+    setKm(item.km.toString());
+    setGasolina(item.gasolina.toString());
   };
 
-  const formatDate = (date) => {
-    return format(date, 'dd/MM/yyyy');
+  const formatarData = (data) => {
+    const dataFormatada = new Date(data);
+    if (isNaN(dataFormatada)) {
+      return '';
+    }
+    return format(dataFormatada, 'dd/MM/yyyy');
   };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.itemContainer}>
       <ListItem.Content>
-        <ListItem.Title>{formatDate(item.date)}</ListItem.Title>
+        <ListItem.Title>{formatarData(item.data)}</ListItem.Title>
         <ListItem.Subtitle>{item.km} KM</ListItem.Subtitle>
         <ListItem.Subtitle>{item.gasolina} Litros</ListItem.Subtitle>
       </ListItem.Content>
@@ -106,29 +134,35 @@ const CrudExample = () => {
           name="pencil"
           type="material-community"
           color="#9e9e9e"
-          onPress={() => handleEditItem(item)}
+          onPress={() => editarItem(item)}
         />
         <Icon
           name="delete"
           type="material"
           color="#ff5252"
-          onPress={() => handleDeleteItem(item.id)}
+          onPress={() => excluirItem(item.id)}
         />
       </View>
     </TouchableOpacity>
   );
 
+  const renderMensagem = (mensagem) => (
+    <View style={styles.containerMensagem}>
+      <Text style={styles.textoMensagem}>{mensagem}</Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.titleContainer}>
+      <View style={styles.containerTitulo}>
         <Icon name="car" type="font-awesome" size={40} color="#fff" />
       </View>
 
-      <View style={styles.formContainer}>
+      <View style={styles.containerFormulario}>
         <Input
           label="Data"
           placeholder="Digite a data"
-          value={formatDate(date)}
+          value={formatarData(data)}
           editable={false}
         />
         <Input
@@ -136,42 +170,34 @@ const CrudExample = () => {
           placeholder="Digite a quantidade de KM"
           keyboardType="numeric"
           value={km}
-          onChangeText={(text) => setKm(text)}
+          onChangeText={(texto) => setKm(texto)}
         />
         <Input
           label="Gasolina (Litros)"
           placeholder="Digite a quantidade de gasolina"
           keyboardType="numeric"
           value={gasolina}
-          onChangeText={(text) => setGasolina(text)}
+          onChangeText={(texto) => setGasolina(texto)}
         />
         <Button
-          title={editingItemId ? 'Salvar' : 'Adicionar'}
-          onPress={handleAddItem}
+          title={itemIdEditando ? 'Salvar' : 'Adicionar'}
+          onPress={adicionarItem}
           disabled={km.trim() === '' || gasolina.trim() === ''}
-          buttonStyle={styles.addButton}
+          buttonStyle={styles.botaoAdicionar}
         />
       </View>
 
       <FlatList
-        ref={flatListRef}
-        data={data}
+        ref={refLista}
+        data={dados}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={styles.listContainer}
+        contentContainerStyle={styles.containerLista}
       />
 
-      {showMessage && (
-        <View style={styles.messageContainer}>
-          <Text style={styles.messageText}>Foi excluído com sucesso!</Text>
-        </View>
-      )}
-
-      {showEditMessage && (
-        <View style={styles.messageContainer}>
-          <Text style={styles.messageText}>Foi editado com sucesso!</Text>
-        </View>
-      )}
+      {exibirMensagem && renderMensagem('Excluído com sucesso!')}
+      {exibirMensagemEdicao && renderMensagem('Editado com sucesso!')}
+      {exibirMensagemExclusao && renderMensagem('Excluído com sucesso!')}
     </View>
   );
 };
@@ -183,22 +209,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 80,
   },
-  titleContainer: {
+  containerTitulo: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 16,
   },
-  formContainer: {
+  containerFormulario: {
     marginBottom: 16,
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 8,
     elevation: 3,
   },
-  addButton: {
+  botaoAdicionar: {
     backgroundColor: '#ff9800',
   },
-  listContainer: {
+  containerLista: {
     flexGrow: 1,
   },
   itemContainer: {
@@ -214,7 +240,7 @@ const styles = StyleSheet.create({
   itemActions: {
     flexDirection: 'row',
   },
-  messageContainer: {
+  containerMensagem: {
     position: 'absolute',
     bottom: 16,
     left: 16,
@@ -224,11 +250,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 3,
   },
-  messageText: {
+  textoMensagem: {
     textAlign: 'center',
     color: 'white',
     fontWeight: 'bold',
   },
 });
 
-export default CrudExample;
+export default ExemploCrud;

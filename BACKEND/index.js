@@ -7,9 +7,9 @@ app.use(express.json());
 
 const cors = require("cors");
 
-app.options("*", cors({ origin: 'http://172.18.137.87:19006', optionsSuccessStatus: 200 }));
+app.options("*", cors({ origin: 'http://192.168.100.43:19006', optionsSuccessStatus: 200 }));
 
-app.use(cors({ origin: "http://172.18.137.87:19006", optionsSuccessStatus: 200 }));
+app.use(cors({ origin: "http://192.168.100.43:19006", optionsSuccessStatus: 200 }));
 
 //Rota Default
 
@@ -59,6 +59,23 @@ app.get('/veiculos', (req, res) => {
 })
 
 
+// Rota para editar
+app.put('/veiculos/:id', (req, res) => {
+  const id = req.params.id;
+  const { date, km, gasolina } = req.body;
+
+  console.log('req.body :>> ', req.body);
+
+  // Verifica se o campo km foi fornecido
+  if (km) {
+    execSQLQuery(`UPDATE veiculos SET km = '${km}', gasolina = '${gasolina}' WHERE id = ${id}`, res);
+  } else {
+    // Converte o valor de data Zuado para o formato do Banco
+    execSQLQuery(`UPDATE veiculos SET data = '${date}' WHERE id = ${id}`, res);
+  }
+});
+
+
 
 
 
@@ -69,7 +86,7 @@ function execSQLQuery(sqlQry, res){
     host     : 'localhost',
     port     : '3306',
     user     : 'root',
-    password : '1234',
+    password : '12345678',
     database : 'sys'
   });
  
