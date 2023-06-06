@@ -79,35 +79,35 @@ const ExemploCrud = () => {
     setGasolina('');
   };
 
-  // const excluirItem = async (id) => {
-  //   try {
-  //     await axios.delete(`http://192.168.100.43:3302/veiculos/${id}`);
-  //     fetchData();
-  //     setExibirMensagemExclusao(true);
-  //     setTimeout(() => {
-  //       setExibirMensagemExclusao(false);
-  //     }, 2000);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const excluirItem = async (id) => {
-    try {
-      await axios.delete(`http://192.168.100.43:3302/veiculos/${id}`);
-      
-      setExibirMensagemExclusao(true);
-      setTimeout(() => {
-        setExibirMensagemExclusao(false);
-      }, 2000);
-
-      setDados(dados.filter(item => item.id !== id));
-    } catch (error) {
-      console.log(error);
-    }
+    Alert.alert(
+      'Confirmação',
+      'Tem certeza de que deseja excluir este item?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Excluir',
+          onPress: async () => {
+            try {
+              await axios.delete(`http://192.168.100.43:3302/veiculos/${id}`);
+              setExibirMensagemExclusao(true);
+              setTimeout(() => {
+                setExibirMensagemExclusao(false);
+              }, 2000);
+              setDados(dados.filter((item) => item.id !== id));
+            } catch (error) {
+              console.log(error);
+            }
+          },
+          style: 'destructive',
+        },
+      ],
+      { cancelable: false }
+    );
   };
-
-
   const editarItem = (item) => {
     setItemIdEditando(item.id);
     setKm(item.km.toString());
