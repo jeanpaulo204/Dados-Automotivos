@@ -6,7 +6,7 @@
                     import Form from './components/form';
 
 
-                    // Componente da tela inicial
+                    // Componente da tela inicial -- Tela de Login que aceita um unico tipo de SENHA e Usuario // Usuario"Admin" - Senha"12345"
                     function HomeScreen({ navigation }) {
                     const [username, setUsername] = useState('');
                     const [password, setPassword] = useState('');
@@ -15,7 +15,7 @@
                         if (username === 'Admin' && password === '12345') {
                         navigation.navigate('Consulta a Anotações');
                         } else {
-                        Alert.alert('Erro de autenticação', 'Credenciais inválidas');
+                        Alert.alert('Erro de autenticação', 'Credenciais inválidas'); // em caso do usuario errar a senha dar um alerta  "Credenciais inválidas"
                         }
                     };
 
@@ -23,7 +23,7 @@
 
 
                     return (
-
+// os inputs da tela inicial com os placeholder="Nome de usuário" e placeholder="Senha" e um button com onPress={handleLogin} para fazer validacao e mudar de rota!
                         <View style={styles.container}>
                         <View style={styles.square}>
                         <Ionicons name="ios-lock-closed" size={30} color="#777" style={styles.icon} />

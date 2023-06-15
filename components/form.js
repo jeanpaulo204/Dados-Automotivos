@@ -5,20 +5,31 @@ import { format } from 'date-fns';
 import axios from 'axios';
 
 const ExemploCrud = () => {
+  // Estado para armazenar os dados da lista
   const [dados, setDados] = useState([]);
+
+  // Estados para controlar os inputs do formulário
   const [data, setData] = useState(new Date());
   const [km, setKm] = useState('');
   const [gasolina, setGasolina] = useState('');
+
+  // Estado para armazenar o ID do item em edição
   const [itemIdEditando, setItemIdEditando] = useState(null);
+
+  // Estados para exibir mensagens de sucesso
   const [exibirMensagem, setExibirMensagem] = useState(false);
   const [exibirMensagemEdicao, setExibirMensagemEdicao] = useState(false);
   const [exibirMensagemExclusao, setExibirMensagemExclusao] = useState(false);
+
+  // Referência para o componente FlatList
   const refLista = useRef(null);
 
+  // Função executada ao carregar o componente, busca os dados da API
   useEffect(() => {
     fetchData();
   }, []);
 
+  // Função para buscar os dados da API
   const fetchData = async () => {
     try {
       const response = await axios.get('http://192.168.100.43:3302/veiculos');
@@ -28,12 +39,14 @@ const ExemploCrud = () => {
     }
   };
 
+  // Função para adicionar um novo item à lista
   const adicionarItem = () => {
     if (km.trim() === '' || gasolina.trim() === '') {
       return;
     }
 
     if (itemIdEditando) {
+      // Atualiza o item existente na API se estiver em modo de edição
       const itemAtualizado = {
         id: itemIdEditando,
         data,
@@ -56,6 +69,7 @@ const ExemploCrud = () => {
 
       setItemIdEditando(null);
     } else {
+      // Adiciona um novo item à API
       const novoItem = {
         id: Date.now(),
         data,
@@ -74,11 +88,13 @@ const ExemploCrud = () => {
         });
     }
 
+    // Limpa os campos do formulário após a adição ou edição
     setData(new Date());
     setKm('');
     setGasolina('');
   };
 
+  // Função para excluir um item da lista
   const excluirItem = async (id) => {
     Alert.alert(
       'Confirmação',
@@ -92,6 +108,7 @@ const ExemploCrud = () => {
           text: 'Excluir',
           onPress: async () => {
             try {
+              // Envia uma solicitação DELETE para a API para excluir o item
               await axios.delete(`http://192.168.100.43:3302/veiculos/${id}`);
               setExibirMensagemExclusao(true);
               setTimeout(() => {
@@ -108,12 +125,15 @@ const ExemploCrud = () => {
       { cancelable: false }
     );
   };
+
+  // Função para editar um item da lista
   const editarItem = (item) => {
     setItemIdEditando(item.id);
     setKm(item.km.toString());
     setGasolina(item.gasolina.toString());
   };
 
+  // Função para formatar a data no formato "dd/MM/yyyy"
   const formatarData = (data) => {
     const dataFormatada = new Date(data);
     if (isNaN(dataFormatada)) {
@@ -122,6 +142,7 @@ const ExemploCrud = () => {
     return format(dataFormatada, 'dd/MM/yyyy');
   };
 
+  // Componente renderizado para cada item da lista
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.itemContainer}>
       <ListItem.Content>
@@ -146,12 +167,14 @@ const ExemploCrud = () => {
     </TouchableOpacity>
   );
 
+  // Componente renderizado para exibir as mensagens de sucesso
   const renderMensagem = (mensagem) => (
     <View style={styles.containerMensagem}>
       <Text style={styles.textoMensagem}>{mensagem}</Text>
     </View>
   );
 
+  // Renderização do componente principal
   return (
     <View style={styles.container}>
       <View style={styles.containerTitulo}>
@@ -159,12 +182,15 @@ const ExemploCrud = () => {
       </View>
 
       <View style={styles.containerFormulario}>
+        {/* Input para exibir a data */}
         <Input
           label="Data"
           placeholder="Digite a data"
           value={formatarData(data)}
           editable={false}
         />
+
+        {/* Input para a quantidade de KM */}
         <Input
           label="Quantos KM?"
           placeholder="Digite a quantidade de KM"
@@ -172,6 +198,8 @@ const ExemploCrud = () => {
           value={km}
           onChangeText={(texto) => setKm(texto)}
         />
+
+        {/* Input para a quantidade de gasolina */}
         <Input
           label="Gasolina (Litros)"
           placeholder="Digite a quantidade de gasolina"
@@ -179,25 +207,26 @@ const ExemploCrud = () => {
           value={gasolina}
           onChangeText={(texto) => setGasolina(texto)}
         />
+
+        {/* Botão para adicionar ou salvar o item */}
         <Button
           title={itemIdEditando ? 'Salvar' : 'Adicionar'}
           onPress={adicionarItem}
-          disabled={km.trim() === '' || gasolina.trim() === ''}
-          buttonStyle={styles.botaoAdicionar}
         />
       </View>
 
+      {/* FlatList para exibir os itens */}
       <FlatList
         ref={refLista}
         data={dados}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={styles.containerLista}
       />
 
-      {exibirMensagem && renderMensagem('Excluído com sucesso!')}
-      {exibirMensagemEdicao && renderMensagem('Editado com sucesso!')}
-      {exibirMensagemExclusao && renderMensagem('Excluído com sucesso!')}
+      {/* Exibição das mensagens de sucesso */}
+      {exibirMensagem && renderMensagem('Item adicionado com sucesso!')}
+      {exibirMensagemEdicao && renderMensagem('Item editado com sucesso!')}
+      {exibirMensagemExclusao && renderMensagem('Item excluído com sucesso!')}
     </View>
   );
 };
@@ -205,55 +234,42 @@ const ExemploCrud = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00bcd4',
-    paddingHorizontal: 16,
-    paddingTop: 80,
+    backgroundColor: '#f2f2f2',
+    padding: 10,
   },
   containerTitulo: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 16,
+    alignItems: 'center',
+    marginVertical: 10,
   },
   containerFormulario: {
-    marginBottom: 16,
     backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 8,
-    elevation: 3,
-  },
-  botaoAdicionar: {
-    backgroundColor: '#ff9800',
-  },
-  containerLista: {
-    flexGrow: 1,
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
   },
   itemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     backgroundColor: '#fff',
-    padding: 16,
-    marginBottom: 8,
-    borderRadius: 8,
-    elevation: 2,
+    borderRadius: 5,
+    marginBottom: 10,
   },
   itemActions: {
     flexDirection: 'row',
   },
   containerMensagem: {
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
-    right: 16,
-    backgroundColor: '#51B449',
-    padding: 16,
-    borderRadius: 8,
-    elevation: 3,
+    backgroundColor: '#4caf50',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
   },
   textoMensagem: {
+    color: '#fff',
+    fontSize: 16,
     textAlign: 'center',
-    color: 'white',
-    fontWeight: 'bold',
   },
 });
 
