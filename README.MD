@@ -2,9 +2,18 @@
 <h3>Tela de Login com Funcionalidade CRUD para Registro de Dados Automotivos</h3>
 
 <img src="./foto/login.png">
-<img src="./foto/erroLogin.png">
+<img src="./foto/add1.png">
 <br/>
-<img src="./foto/crud.png">
+<img src="./foto/add2.png">
+<img src="./foto/editando.png">
+<br/>
+<br/>
+<img src="./foto/desejaExcluir.jpeg">
+<img src="./foto/excluirCOMSuceso.png">
+<br/>
+<br/>
+<img src="./foto/add.png">
+<img src="./foto/edit.png">
 <img src="./foto/delete.png">
 <br/>
 
