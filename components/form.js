@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, FlatList, TouchableOpacity, StyleSheet, Alert, Text } from 'react-native';
 import { Input, Button, ListItem, Icon } from 'react-native-elements';
 import { format } from 'date-fns';
+import DialogForm from './dialogForm';
 import axios from 'axios';
+
+
+
 
 const ExemploCrud = () => {
   // Estado para armazenar os dados da lista
@@ -37,6 +41,16 @@ const ExemploCrud = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const [isDialogVisible, setDialogVisible] = useState(false);
+
+  const openDialog = () => {
+    setDialogVisible(true);
+  };
+
+  const closeDialog = () => {
+    setDialogVisible(false);
   };
 
   // Função para adicionar um novo item à lista
@@ -180,7 +194,8 @@ const ExemploCrud = () => {
       <View style={styles.containerTitulo}>
         <Icon name="car" type="font-awesome" size={40} color="#fff" />
       </View>
-
+      <Button title="Anotações" onPress={openDialog} />
+      <DialogForm isVisible={isDialogVisible} onClose={closeDialog} />
       <View style={styles.containerFormulario}>
         {/* Input para exibir a data */}
         <Input
