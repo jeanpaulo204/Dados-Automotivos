@@ -5,9 +5,6 @@ import { format } from 'date-fns';
 import DialogForm from './dialogForm';
 import axios from 'axios';
 
-
-
-
 const ExemploCrud = () => {
   // Estado para armazenar os dados da lista
   const [dados, setDados] = useState([]);
@@ -194,7 +191,7 @@ const ExemploCrud = () => {
       <View style={styles.containerTitulo}>
         <Icon name="car" type="font-awesome" size={40} color="#fff" />
       </View>
-      <Button title="Anotações" onPress={openDialog} />
+      <Button title="Criar Um Lembrete" onPress={openDialog} />
       <DialogForm isVisible={isDialogVisible} onClose={closeDialog} />
       <View style={styles.containerFormulario}>
         {/* Input para exibir a data */}
@@ -214,7 +211,7 @@ const ExemploCrud = () => {
           onChangeText={(texto) => setKm(texto)}
         />
 
-        {/* Input para a quantidade de gasolina */}
+        {/* Input para a quantidadede gasolina */}
         <Input
           label="Gasolina (Litros)"
           placeholder="Digite a quantidade de gasolina"
@@ -249,7 +246,7 @@ const ExemploCrud = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#00bcd4',
     padding: 10,
   },
   containerTitulo: {
